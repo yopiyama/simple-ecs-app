@@ -48,6 +48,18 @@ docker tag simple-app/client-service:latest <account-id>.dkr.ecr.ap-northeast-1.
 $ docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest
 ```
 
+### Deploy by Terraform
+
+事前に ./terraform へ .tfvars ファイルを作成する。
+
+```sh
+cd terraform
+touch dev.tfvars
+
+terraform plan -var-file=dev.tfvars
+terraform apply -var-file=dev.tfvars
+```
+
 ## Reference
 
 - [AWS ECS Fargateにシンプルなアプリをデプロイする](https://qiita.com/ny7760/items/6b1be8da329da79294e6)
