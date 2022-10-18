@@ -1,8 +1,28 @@
-resource "aws_ecs_task_definition" "api-service" {
+variable "sysdig_api_token" {}
+variable "sysdig_access_key" {}
+variable "orchestrator_host" {}
+variable "orchestrator_port" {}
+
+terraform {
+  required_providers {
+    sysdig = {
+      source  = "sysdiglabs/sysdig"
+      version = ">= 0.5.39"
+    }
+  }
+}
+
+
+provider "sysdig" {
+  sysdig_secure_api_token = "${var.sysdig_api_token}"
+}
+
+
+data "sysdig_fargate_workload_agent" "api-service-instrumented" {
   container_definitions = jsonencode(
     [
       {
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:latest"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:1"
         cpu   = 0
         logConfiguration = {
           logDriver = "awslogs"
@@ -20,10 +40,21 @@ resource "aws_ecs_task_definition" "api-service" {
             hostPort      = 3000
             protocol      = "tcp"
           },
+        ],
+        entryPoint = [
+          "/usr/local/bin/python", "/src/api_server.py"
         ]
       },
     ]
   )
+  workload_agent_image  = "quay.io/sysdig/workload-agent:latest"
+  sysdig_access_key = "${var.sysdig_access_key}"
+  orchestrator_host = "${var.orchestrator_host}"
+  orchestrator_port = "${var.orchestrator_port}"
+}
+
+resource "aws_ecs_task_definition" "api-service" {
+  container_definitions    = "${data.sysdig_fargate_workload_agent.api-service-instrumented.output_container_definitions}"
   family                   = "api-service"
   execution_role_arn       = "arn:aws:iam::${var.account_id}:role/ecsTaskExecutionRole"
   cpu                      = "256"
@@ -36,13 +67,12 @@ resource "aws_ecs_task_definition" "api-service" {
   }
 }
 
-
-resource "aws_ecs_task_definition" "client-service" {
+data "sysdig_fargate_workload_agent" "client-service-instrumented" {
   container_definitions = jsonencode(
     [
       {
         cpu   = 0
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:1"
         environment = [
           {
             name  = "backend_service_port"
@@ -70,10 +100,24 @@ resource "aws_ecs_task_definition" "client-service" {
             hostPort      = 8501
             protocol      = "tcp"
           },
+        ],
+        entryPoint = [
+          "/usr/local/bin/streamlit", "run", "/src/client.py"
         ]
       },
     ]
   )
+  workload_agent_image  = "quay.io/sysdig/workload-agent:latest"
+  sysdig_access_key = "${var.sysdig_access_key}"
+  orchestrator_host = "${var.orchestrator_host}"
+  orchestrator_port = "${var.orchestrator_port}"
+
+}
+
+
+resource "aws_ecs_task_definition" "client-service" {
+  container_definitions    = "${data.sysdig_fargate_workload_agent.client-service-instrumented.output_container_definitions}"
+
   family                   = "client-service"
   execution_role_arn       = "arn:aws:iam::${var.account_id}:role/ecsTaskExecutionRole"
   cpu                      = "256"
