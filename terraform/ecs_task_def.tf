@@ -2,7 +2,7 @@ resource "aws_ecs_task_definition" "api-service" {
   container_definitions = jsonencode(
     [
       {
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:latest"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:${var.api_service_image_ver}"
         cpu   = 0
         logConfiguration = {
           logDriver = "awslogs"
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "client-service" {
     [
       {
         cpu   = 0
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:${var.client_service_image_ver}"
         environment = [
           {
             name  = "backend_service_port"
