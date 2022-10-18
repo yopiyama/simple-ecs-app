@@ -19,7 +19,6 @@ docker build -t simple-app/api-service -f container/Dockerfile .
 docker run -d --name simple-app/api-service simple-app/api-service:latest
 ```
 
-
 ```sh
 cd client
 docker build -t simple-app/client-service -f container/Dockerfile .
@@ -38,14 +37,14 @@ Push ECR
 cd api
 docker build -t simple-app/api-service -f container/Dockerfile .
 docker tag simple-app/api-service:latest <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:latest
-$ docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:latest
+docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:latest
 ```
 
 ```sh
 cd client
 docker build -t simple-app/client-service -f container/Dockerfile .
 docker tag simple-app/client-service:latest <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest
-$ docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest
+docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:latest
 ```
 
 ### Deploy by Terraform
@@ -54,10 +53,12 @@ $ docker push <account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/clien
 
 ```sh
 cd terraform
-touch dev.tfvars
+touch terraform.tfvars
+vim terraform.tfvars
+# ...
 
-terraform plan -var-file=dev.tfvars
-terraform apply -var-file=dev.tfvars
+terraform plan
+terraform apply
 ```
 
 ## Reference
