@@ -22,7 +22,7 @@ data "sysdig_fargate_workload_agent" "api-service-instrumented" {
   container_definitions = jsonencode(
     [
       {
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:1"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/api-service:${var.api_service_image_ver}"
         cpu   = 0
         logConfiguration = {
           logDriver = "awslogs"
@@ -72,7 +72,7 @@ data "sysdig_fargate_workload_agent" "client-service-instrumented" {
     [
       {
         cpu   = 0
-        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:1"
+        image = "${var.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/simple-app/client-service:${var.client_service_image_ver}"
         environment = [
           {
             name  = "backend_service_port"
