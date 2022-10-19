@@ -10,9 +10,7 @@ variable "subnet_d" {}
 
 variable "sg_from_home" {}
 variable "sg_localnet" {}
-
-variable "api_service_image_ver" {}
-variable "client_service_image_ver" {}
+variable "sg_vpn" {}
 
 resource "aws_service_discovery_private_dns_namespace" "simple-app-local-internal" {
   name        = "simple-app.local"

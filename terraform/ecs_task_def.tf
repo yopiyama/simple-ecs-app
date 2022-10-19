@@ -1,3 +1,12 @@
+variable "api_service_image_ver" {
+  type = string
+  default = "1"
+}
+variable "client_service_image_ver" {
+  type = string
+  default = "1"
+}
+
 resource "aws_ecs_task_definition" "api-service" {
   container_definitions = jsonencode(
     [
