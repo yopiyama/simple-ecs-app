@@ -70,7 +70,8 @@ resource "aws_ecs_service" "client-service" {
     assign_public_ip = true
     security_groups = [
       "${var.sg_localnet}",
-      "${var.sg_from_home}"
+      "${var.sg_from_home}",
+      "${var.sg_vpn}"
     ]
     subnets = [
       "${var.subnet_a}",

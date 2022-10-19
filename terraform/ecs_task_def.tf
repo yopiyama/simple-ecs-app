@@ -1,3 +1,12 @@
+variable "api_service_image_ver" {
+  type = string
+  default = "1"
+}
+variable "client_service_image_ver" {
+  type = string
+  default = "1"
+}
+
 variable "sysdig_api_token" {}
 variable "sysdig_access_key" {}
 variable "orchestrator_host" {}
